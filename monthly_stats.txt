@@ -1,0 +1,119 @@
+January
+COM domains added to zone: 4241230
+BIZ domains added to zone: 100209
+
+February
+COM domains added to zone: 3945226
+BIZ domains added to zone: 117719
+
+March
+COM domains added to zone: 5170692
+BIZ domains added to zone: 115371
+
+April
+COM domains added to zone: 4080681
+BIZ domains added to zone: 120276
+
+May
+COM domains added to zone: 4608789
+BIZ domains added to zone: 110783
+
+June
+COM domains added to zone: 4220723
+BIZ domains added to zone: 95290
+
+-----
+January
+COM domains added to malware blacklist: 1785
+BIZ domains added to malware blacklist: 16
+
+February
+COM domains added to malware blacklist: 2388
+BIZ domains added to malware blacklist: 15
+
+March
+COM domains added to malware blacklist: 1800
+BIZ domains added to malware blacklist: 17
+
+April
+COM domains added to malware blacklist: 2033
+BIZ domains added to malware blacklist: 17
+
+May
+COM domains added to malware blacklist: 2700
+BIZ domains added to malware blacklist: 28
+
+June
+COM domains added to malware blacklist: 2718
+BIZ domains added to malware blacklist: 34
+
+July
+COM domains added to malware blacklist: 2304
+BIZ domains added to malware blacklist: 25
+
+August
+COM domains added to malware blacklist: 2526
+BIZ domains added to malware blacklist: 27
+
+September
+COM domains added to malware blacklist: 1355
+BIZ domains added to malware blacklist: 15
+
+-----
+
+About to do: added to zones (without expiry ones, or dup names) CURRENTLY RUNNING
+
+---
+January
+COM domains added to zone THEN seen in malware blacklist: 103
+
+February
+COM domains added to zone THEN seen in malware blacklist: 222
+
+March
+COM domains added to zone THEN seen in malware blacklist: 200
+
+April
+COM domains added to zone THEN seen in malware blacklist: 270
+
+May
+COM domains added to zone THEN seen in malware blacklist: 418
+
+June
+COM domains added to zone THEN seen in malware blacklist: 454
+
+July
+COM domains added to zone THEN seen in malware blacklist: 361
+
+August
+COM domains added to zone THEN seen in malware blacklist: 291
+
+September
+COM domains added to zone THEN seen in malware blacklist: 147
+
+January
+BIZ domains added to zone THEN seen in malware blacklist: 2
+
+February
+BIZ domains added to zone THEN seen in malware blacklist: 5
+
+March
+BIZ domains added to zone THEN seen in malware blacklist: 8
+
+April
+BIZ domains added to zone THEN seen in malware blacklist: 5
+
+May
+BIZ domains added to zone THEN seen in malware blacklist: 12
+
+June
+BIZ domains added to zone THEN seen in malware blacklist: 12
+
+July
+BIZ domains added to zone THEN seen in malware blacklist: 3
+
+August
+BIZ domains added to zone THEN seen in malware blacklist: 6
+
+September
+BIZ domains added to zone THEN seen in malware blacklist: 1

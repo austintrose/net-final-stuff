@@ -1,0 +1,13 @@
+Hey Zhanna!
+
+There are three things especially in this repo I think should be useful to you, to do some writing:
+
+- "days_between_registration_and_appearance.png"
+	- This is that first figure, of course.
+
+- "biz_malware_whois_registrars.txt" and "com_malware_whois_registrars.txt"
+	- I haven't actually turned these two files into results! Per se.
+	- It would be great if you could sort the counts, and make the proper tables out of them.
+
+- "tables.xlsx"
+	- This has completed results/data. It's not pretty, it's just a shit excel table, but it is accurate.

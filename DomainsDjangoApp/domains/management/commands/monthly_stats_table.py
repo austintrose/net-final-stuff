@@ -1,3 +1,15 @@
+# import datetime
+
+# from django.core.management.base import BaseCommand, CommandError
+# from domains.models import (AddedZoneDomain, RemovedZoneDomain,
+#                             Nameserver, AddedMalwareDomain, RemovedMalwareDomain, WhoisQuery)
+
+
+# class Command(BaseCommand):
+#     def handle(self, *args, **options):
+
+
+
 import os
 import datetime
 import re
@@ -6,6 +18,10 @@ from collections import defaultdict
 from django.core.management.base import BaseCommand, CommandError
 from domains.models import (AddedZoneDomain, RemovedZoneDomain,
                             Nameserver, AddedMalwareDomain, RemovedMalwareDomain)
+
+def month_name(num):
+    date = datetime.date(2016, num, 1)
+    return date.strftime('%B')
 
 def pk_to_matches(azd_pk):
     azd = AddedZoneDomain.objects.get(pk=azd_pk)
@@ -18,10 +34,41 @@ def pk_has_expiry_notice(pk):
             return True
     return False
 
+def azd_has_expiry_notice(azd):
+    for ns in azd.nameservers.all():
+        if "EXPIR" in ns.name:
+            return True
+    return False
+
 looking_at_tld = "COM"
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        for month in range(1, 13):
+            print month_name(month)
+
+            azds = AddedZoneDomain.objects.filter(added__month=month)
+            print '.'
+            com_azds = azds.filter(tld="COM")
+            print '.'
+            biz_azds = azds.filter(tld="BIZ")
+            print '.'
+
+            com_azds_noex = [a.name for a in com_azds if not azd_has_expiry_notice(a)]
+            print '.'
+            com_azds_noex_set = set(com_azds_noex)
+            print '.'
+            biz_azds_noex = [a.name for a in biz_azds if not azd_has_expiry_notice(a)]
+            print '.'
+            biz_azds_noex_set = set(biz_azds_noex)
+            print '.'
+
+            print "COM domains added to zone (ignoring expiry additions, and dups): %d" % len(com_azds_noex)
+            print "BIZ domains added to zone (ignoring expiry additions, and dups): %d" % len(biz_azds_noex)
+            print
+
+        exit(0)
+
 
         # Read PKs with matches from list.
         with open('/home/atrose/domain_matches.txt', 'r') as f:
@@ -55,6 +102,14 @@ class Command(BaseCommand):
         # Processing two sets of dates is hard.
         reduced = [i for i in my_grand_list if len(i['malware_dates']) == 1]
 
+        valid_data_points = [valid_ordering(i['zone_dates'], i['malware_dates'][0]) for i in my_grand_list]
+        valid_data_points = [p for p in valid_data_points if p]
+
+        print looking_at_tld
+        print len(valid_data_points)
+        print valid_data_points
+        exit(0)
+
 
         # Convert dates to distances between.
         numbers = [dates_to_number(i['zone_dates'], i['malware_dates'][0]) for i in my_grand_list]
@@ -76,6 +131,6 @@ def valid_ordering(azd_dates, malware_date):
     for d in azd_dates:
         delta = malware_date - d
         if delta.days < lowest_positive_delta and delta.days >= 0:
-            return True
+            return malware_date.month
     return False
 

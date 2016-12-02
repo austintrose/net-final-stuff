@@ -1,3 +1,15 @@
+# import datetime
+
+# from django.core.management.base import BaseCommand, CommandError
+# from domains.models import (AddedZoneDomain, RemovedZoneDomain,
+#                             Nameserver, AddedMalwareDomain, RemovedMalwareDomain, WhoisQuery)
+
+
+# class Command(BaseCommand):
+#     def handle(self, *args, **options):
+
+
+
 import os
 import datetime
 import re
@@ -6,6 +18,10 @@ from collections import defaultdict
 from django.core.management.base import BaseCommand, CommandError
 from domains.models import (AddedZoneDomain, RemovedZoneDomain,
                             Nameserver, AddedMalwareDomain, RemovedMalwareDomain)
+
+def month_name(num):
+    date = datetime.date(2016, num, 1)
+    return date.strftime('%B')
 
 def pk_to_matches(azd_pk):
     azd = AddedZoneDomain.objects.get(pk=azd_pk)
@@ -18,10 +34,18 @@ def pk_has_expiry_notice(pk):
             return True
     return False
 
-looking_at_tld = "COM"
+def azd_has_expiry_notice(azd):
+    for ns in azd.nameservers.all():
+        if "EXPIR" in ns.name:
+            return True
+    return False
+
+looking_at_tld = "BIZ"
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+
+
 
         # Read PKs with matches from list.
         with open('/home/atrose/domain_matches.txt', 'r') as f:
@@ -55,6 +79,17 @@ class Command(BaseCommand):
         # Processing two sets of dates is hard.
         reduced = [i for i in my_grand_list if len(i['malware_dates']) == 1]
 
+        valid_data_points = [valid_ordering(i['zone_dates'], i['malware_dates'][0]) for i in my_grand_list]
+        valid_data_points = [p for p in valid_data_points if p]
+
+        for month in range(1, 13):
+            print month_name(month)
+            matching_points = [p for p in valid_data_points if p == month]
+            print "%s domains added to zone THEN seen in malware blacklist: %d" % (looking_at_tld, len(matching_points))
+            print
+        exit(0)
+
+
 
         # Convert dates to distances between.
         numbers = [dates_to_number(i['zone_dates'], i['malware_dates'][0]) for i in my_grand_list]
@@ -76,6 +111,6 @@ def valid_ordering(azd_dates, malware_date):
     for d in azd_dates:
         delta = malware_date - d
         if delta.days < lowest_positive_delta and delta.days >= 0:
-            return True
+            return malware_date.month
     return False
 

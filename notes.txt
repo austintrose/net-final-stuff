@@ -24,9 +24,13 @@ To analyze:
 
 How many days of data exactly do we have?
 
+Monthly statistics do not include any additions we saw where the NS had something like the word "EXPIRED" in it.
+
 Analysis of "Days between registration and appearance":
 - Ours goes well up to 300 days
 
 LAST THINGS
 - screen -r 2644.whois still just adding as many whois to DB as possible
 
+We can slightly do the first "days between use and registration" plot they have by doing the WHOIS (use who_malware_q script) on all the malware domains,
+and comparing the creation date (latest one? maybe update date?) with the date added to blacklist.
