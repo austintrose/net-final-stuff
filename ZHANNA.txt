@@ -11,3 +11,4 @@ There are three things especially in this repo I think should be useful to you, 
 
 - "tables.xlsx"
 	- This has completed results/data. It's not pretty, it's just a shit excel table, but it is accurate.
+	- I used the stuff in "monthly_stats.txt" to make these tables
