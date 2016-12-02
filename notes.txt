@@ -1,0 +1,28 @@
+Networks:
+- Diagram of data filtering process for presentation
+- Explicit adapted problem statement
+- Interestingly, we saw a lot of cases where a domain appeared in the malware blacklists, and in the zone files, but the malware was first
+    - So those cases didn’t tell us anything about how long between registration and blacklisting
+    - About half the data, so we end up with 2500 data points for COM, X for BIZ
+- In days between, there is a clear difference in how fast BIZ domains are flagged
+- Biggest limitation was the size of our blacklist - original paper knew about tons of spam domains
+    - We knew relatively few malware domains compared to millions of registered domains
+- Unable to do 26 million WHOIS
+    - But we did for about a million random domains in our data
+    - Only counted the whois data if the creation_date was before or on malware blacklist date
+    - Able to do whois for specifically all the domains we saw in malware blacklist
+
+Note about data process: We sorted them to make it possible to diff.
+
+To analyze:
+- Percent chance that a COM/BIZ domain registered also appeared in our blacklist
+- Make days between graph prettier
+- Percent of malware domains from different registrars
+- How many domains registered on a given day were eventually marked as malware (abnormal registration batches)
+- Nameserver toxicity
+- Days between removal and addition, and correlation with being malware
+
+LAST THINGS
+- screen -r 38680.whois_malware is creating file malware_COM_registrars.txt to match the malware_BIZ_registrars.txt file.
+- screen -r 2644.whois still just adding as many whois to DB as possible
+
