@@ -22,7 +22,11 @@ To analyze:
 - Nameserver toxicity
 - Days between removal and addition, and correlation with being malware
 
+How many days of data exactly do we have?
+
+Analysis of "Days between registration and appearance":
+- Ours goes well up to 300 days
+
 LAST THINGS
-- screen -r 38680.whois_malware is creating file malware_COM_registrars.txt to match the malware_BIZ_registrars.txt file.
 - screen -r 2644.whois still just adding as many whois to DB as possible
 
