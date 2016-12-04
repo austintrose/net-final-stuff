@@ -12,7 +12,7 @@ from django.core.management.base import BaseCommand, CommandError
 from threading import Thread
 from domains.models import (AddedZoneDomain, RemovedZoneDomain, Nameserver, AddedMalwareDomain, RemovedMalwareDomain, WhoisQuery)
 
-current_tld = "BIZ"
+current_tld = "COM"
 registrar_domains_map = defaultdict(list)
 grand_return = []
 
