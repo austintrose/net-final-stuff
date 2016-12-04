@@ -18,7 +18,7 @@ def collect_for(tld):
         lines = f.readlines()
     pks = [ int(l[l.find('pk=')+3:].strip()) for l in lines]
 
-    # Look at
+    # Look at the nameservers of known malware domains.
     nameserver_domains = defaultdict(lambda: defaultdict(list))
     for pk in pks:
         azd = AddedZoneDomain.objects.get(pk=pk)
@@ -35,16 +35,17 @@ def collect_for(tld):
     for ns, d in nameserver_domains.iteritems():
         unique_all = list(set(d['all']))
         unique_bad = list(set(d['bad']))
-        filter_all = [a for a in unique_all if not a in unique_bad]
+        good_from_all = [a for a in unique_all if not a in unique_bad]
 
-        nameserver_domains[ns]['all'] = filter_all
+        nameserver_domains[ns]['all'] = unique_all
+        nameserver_domains[ns]['good'] = good_from_all
         nameserver_domains[ns]['bad'] = unique_bad
 
     ns_list = nameserver_domains.keys()
 
     ns_bad_tox = []
     for ns in sorted(ns_list):
-        good = nameserver_domains[ns]['all']
+        good = nameserver_domains[ns]['good']
         bad = nameserver_domains[ns]['bad']
 
         tox = 100.0 * float(len(bad)) / (len(good) + len(bad))
