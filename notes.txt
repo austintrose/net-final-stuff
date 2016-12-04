@@ -29,8 +29,8 @@ Monthly statistics do not include any additions we saw where the NS had somethin
 Analysis of "Days between registration and appearance":
 - Ours goes well up to 300 days
 
-LAST THINGS
-- screen -r 2644.whois still just adding as many whois to DB as possible
+Non Spammer VS Spammer Domain Counts Scatter Plot:
+- We only have the registrar lookups for 1,890,519 of the domains we saw added t the zone file. This should account for about 14% of all domains added. Some limits came from time constraints, and others because created date was too late to be sure. This means that our results could look differently, if we had been able to collect the other 82% of data.
 
 We can slightly do the first "days between use and registration" plot they have by doing the WHOIS (use who_malware_q script) on all the malware domains,
 and comparing the creation date (latest one? maybe update date?) with the date added to blacklist.
