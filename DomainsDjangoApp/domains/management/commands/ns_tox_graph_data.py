@@ -17,47 +17,29 @@ from domains.models import (AddedZoneDomain, RemovedZoneDomain,
 def list_dd():
     return defaultdict(list)
 
-def set_dd():
-    return defaultdict(set)
-
 def nameserver_domains_dd():
-    return defaultdict(set_dd)
+    return defaultdict(list_dd)
 
 
 def collect_for(tld):
-    # Read PKs with matches from list.
-    with open('/home/atrose/domain_matches.txt', 'r') as f:
-        lines = f.readlines()
-    pks = [ int(l[l.find('pk=')+3:].strip()) for l in lines]
+    infile = open('/home/atrose/%s_ns_data' % tld, 'rb')
+    nameserver_domains = pickle.load(infile)
+    infile.close()
 
-    # Look at the nameservers of known malware domains.
-    nameserver_domains = nameserver_domains_dd()
-    for pk in pks:
-        azd = AddedZoneDomain.objects.get(pk=pk)
+    # For each name server, generate a number for its toxicity.
+    ns_tox_bad_count_list = []
+    for ns, domains_dict in nameserver_domains.iteritems():
+        bad_set = domains_dict['bad']
+        all_set = domains_dict['all']
+        bad_count = len(bad_set)
+        tox = (100.0 * len(bad_set)) / len(all_set)
+        ns_tox_bad_count_list.append((ns, tox, bad_count))
+        print ns, tox, bad_count
 
-        # Only look at one TLD.
-        if azd.tld != tld:
-            continue
-
-        # Take every nameserver associated with this bad domain.
-        for ns in azd.nameservers.all():
-            if 'EXPIR' in ns.name:
-                continue
-            if 'RENEW' in ns.name:
-                continue
-            if 'SUSPENDED' in ns.name:
-                continue
-
-            new_values = ns.added_domains.values_list('name', flat=True)
-            nameserver_domains[ns.name.strip()]['all'].update(set(new_values))
-            nameserver_domains[ns.name.strip()]['bad'].add(azd.name)
-
-    outfile = open(tld + '_ns_data', 'wb')
-    pickle.dump(nameserver_domains, outfile)
+    ns_tox_bad_count_list = sorted(ns_tox_bad_count_list, key=lambda x: -x[2])
+    outfile = open('/home/atrose/%s_ns_tox_datapoints' % tld, 'wb')
+    pickle.dump(ns_tox_bad_count_list, outfile)
     outfile.close()
-    print "Wrote", tld, 'data'
-    return
-    # exit(0)
 
     # group_regex = {
     #     '[A,B].NS36.DE' : {
@@ -66,6 +48,7 @@ def collect_for(tld):
     #         'rex': re.compile('[AB].NS36.DE')
     #     },
     # }
+
 
     # for ns in ns_list:
     #     for k, d in group_regex.iteritems():
@@ -128,6 +111,7 @@ def collect_for(tld):
 
     # print
     # print
+    exit(0)
     # print "DID MATCH"
 
     # analy = []

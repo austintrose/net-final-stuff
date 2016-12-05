@@ -34,3 +34,39 @@ Non Spammer VS Spammer Domain Counts Scatter Plot:
 
 We can slightly do the first "days between use and registration" plot they have by doing the WHOIS (use who_malware_q script) on all the malware domains,
 and comparing the creation date (latest one? maybe update date?) with the date added to blacklist.
+
+Reg scatter plots should really be legend labeled by highest malware count, and outliers (only malware? right on the line?) should
+be labelled too.
+
+FILE:
+BIZ_ns_data, COM_ns_data
+- pickled dictionary of nameserver to all and bad domains lists.
+
+BIZ_ns_tox_datapoints, COM_ns_tox_datapoints
+- pickled list of ns,tox,bad_count tuples for the ns tox graph
+
+biz_scatter_data, com_scatter_data
+- pickled list of dicts with registrar, good counts, bad counts
+
+biz_registrar_scatter_plot.py, com_registrar_scatter_plot.py
+- plot from *_scatter_data
+
+daily_biz_additions.txt
+- number of additions, malware or not, to biz every day
+
+daily_biz_malware_additions.txt, daily_com_malware_additions.txt
+- number of malware additions to tld every day
+
+CURRENTLY HAVE:
+- daily_biz_malware_additions.txt
+- daily_com_malware_additions.txt
+- daily_biz_additions.txt
+    - These have number of malware domains registered each day.
+    - python ~/DomainsDjangoApp/manage.py daily_stats | tee daily_com_additions.txt running to collect daily_com_additions.txt in 18901.daily_any_additions
+
+STILL TODO:
+have com_ns_top_bad and com_ns_groupings_10, make for biz, then analyze both same
+
+
+- get simple toxicity value for each NS for the graph, com and biz
+- for a variety of spikes defined, look at % normal that would be in spike, and % malware that would be in spike
