@@ -51,7 +51,13 @@ biz_scatter_data, com_scatter_data
 biz_registrar_scatter_plot.py, com_registrar_scatter_plot.py
 - plot from *_scatter_data
 
-daily_biz_additions.txt
+BIZ_ns_top_malware.txt, COM_ns_top_malware.txt
+- ns seen with highest number of malware domains
+
+BIZ_ns_top_overlap.txt, COM_ns_top_overlap.txt
+- use with above files to generate good tox table
+
+daily_biz_additions.txt, NEED OTHER
 - number of additions, malware or not, to biz every day
 
 daily_biz_malware_additions.txt, daily_com_malware_additions.txt

@@ -14,19 +14,13 @@ from django.core.management.base import BaseCommand, CommandError
 from domains.models import (AddedZoneDomain, RemovedZoneDomain,
                             Nameserver, AddedMalwareDomain, RemovedMalwareDomain)
 
+def set_dd():
+    return defaultdict(set)
+
 def list_dd():
     return defaultdict(list)
 
-def nameserver_domains_dd():
-    return defaultdict(list_dd)
-
-
-def collect_for(tld):
-    infile = open('/home/atrose/%s_ns_data' % tld, 'rb')
-    nameserver_domains = pickle.load(infile)
-    infile.close()
-
-    # Get a list of the nameservers with the highest numbers of malware domains.
+def top_malware(nameserver_domains):
     print "%s_ns_top_malware" % tld
     ns_malware_count = []
     for ns, domains_dict in nameserver_domains.iteritems():
@@ -38,94 +32,70 @@ def collect_for(tld):
     for ns, count in ns_malware_count:
         print ns, count
 
-    # Get a list of nameservers with the largest overlap.
+def top_overlap(nameserver_domains):
+    print "%s_ns_top_overlap" % tld
+    domain_set_to_ns_set = defaultdict(set)
+    for ns, domains_dict in nameserver_domains.iteritems():
+        domain_set_to_ns_set[tuple(domains_dict['all'])].add(ns)
 
-    # ns_tox_bad_count_list = sorted(ns_tox_bad_count_list, key=lambda x: -x[2])
-    # outfile = open('/home/atrose/%s_ns_tox_datapoints' % tld, 'wb')
-    # pickle.dump(ns_tox_bad_count_list, outfile)
-    # outfile.close()
+    domain_set_ns_set_pairs = domain_set_to_ns_set.iteritems()
+    for domain_set, ns_set in sorted(domain_set_ns_set_pairs, key=lambda x: -len(x[0])):
+        print len(domain_set), tuple(ns_set)
 
-    # group_regex = {
-    #     '[A,B].NS36.DE' : {
-    #         'ns': [],
-    #         'domains': list_dd(),
-    #         'rex': re.compile('[AB].NS36.DE')
-    #     },
-    # }
+def collect_for(tld):
+    infile = open('/home/atrose/%s_ns_data' % tld, 'rb')
+    nameserver_domains = pickle.load(infile)
+    infile.close()
 
+    # Matching groups for NS.
+    group_regex = {
+        '(A|B).NS36.DE' : {
+            'ns': [],
+            'domains': list_dd(),
+            'rex': re.compile('[AB].NS36.DE')
+        },
+        'NS(1|4).CSOF.NET' : {
+            'ns': [],
+            'domains': list_dd(),
+            'rex': re.compile('NS(1|4).CSOF.NET')
+        },
+    }
 
-    # for ns in ns_list:
-    #     for k, d in group_regex.iteritems():
-    #         rex = d['rex']
-    #         if rex.match(ns):
-    #             old_all = nameserver_domains[ns]['all']
-    #             old_good = nameserver_domains[ns]['good']
-    #             old_bad = nameserver_domains[ns]['bad']
-    #             d['domains']['all'].append(old_all)
-    #             d['domains']['good'].append(old_good)
-    #             d['domains']['bad'].append(old_bad)
-    #             d['ns'].append(ns)
-    #             nameserver_domains[ns] = False
-    #             break
-    #     else:
-    #         pass
-            # print ns, "not matched"
+    # Figure out which NS match which groups.
+    for ns, domains_dict in nameserver_domains.iteritems():
+        ns_all_set = domains_dict['all']
+        ns_bad_set = domains_dict['bad']
 
+        for group_name, matches_dict in group_regex.iteritems():
+            rex = matches_dict['rex']
+            if rex.match(ns):
+                matches_dict['domains']['all'].append(domains_dict['all'])
+                matches_dict['domains']['bad'].append(domains_dict['bad'])
+                matches_dict['ns'].append(ns)
+                nameserver_domains[ns] = False
+                break
 
-    # ns_and_bad_count = [(ns, len(nameserver_domains[ns]['bad'])) for
-    #                     ns in nameserver_domains.keys()]
-
-    # print tld, 'top bad counts'
-    # for ns, bad_count in sorted(ns_and_bad_count, key=lambda x: -x[1])[:100]:
-    #     print ns.strip(), bad_count
-
-
-    # short_map = {}
-    # for ns in nameserver_domains.keys():
-    #     all_domains_assoc = nameserver_domains[ns]['all']
-    #     short_list = tuple(sorted(all_domains_assoc)[:10])
-    #     short_map[ns] = short_list
-
-    # short_list = sorted([(v,k) for (k,v) in short_map.iteritems()])
-    # dlist_to_ns = defaultdict(list)
-    # for list_of_domain, ns in short_list:
-    #     dlist_to_ns[list_of_domain].append(ns)
-
-    # print "%s NS associations" % tld
-    # for k,v in sorted(dlist_to_ns.iteritems(), key=lambda x: -len(x[0]))[:100]:
-    #     if len(v) > 1:
-    #         print v, len(k)
-    # outfile = open('group_regex', 'wb')
-    # pickle.dump(group_regex, outfile)
-    # outfile.close()
-    # exit(0)
-
-    # SHOW NOT MATCHES ONES
-    # print 'DIDNT MATCH'
-    # for ns in sorted(ns_list):
+    # print 'Not grouped:'
+    # for ns in sorted(nameserver_domains.keys()):
     #     if nameserver_domains[ns] == False:
     #         continue
-    #     all_d = nameserver_domains[ns]['all']
-    #     good = nameserver_domains[ns]['good']
-    #     bad = nameserver_domains[ns]['bad']
+    #     else:
+    #         print ns, 'not grouped'
 
-    #     print ns
-    #     print sorted(all_d)[:5]
-    #     print
+    # exit(0)
 
-    # print
-    # print
-    exit(0)
-    # print "DID MATCH"
+    analy = []
+    for group_name, matches_dict in group_regex.iteritems():
+        matching_ns_list = matches_dict['ns']
+        bad_domains_sets = matches_dict['domains']['bad']
+        all_domains_sets = matches_dict['domains']['all']
 
-    # analy = []
-    # for ns_group in group_regex.keys():
-    #     matching_ns = group_regex[ns_group]['ns']
-    #     good_domains_lists = group_regex[ns_group]['domains']['good']
-    #     bad_domains_lists = group_regex[ns_group]['domains']['bad']
-    #     all_domains_lists = group_regex[ns_group]['domains']['all']
+        union_size = union_domain_sets_size(all_domains_sets)
+        intersection_size = intersection_domain_sets_size(all_domains_sets)
+        jaccard_index = float(intersection_size) / union_size
 
-    #     intersect_count = float(intersection_domain_lists(all_domains_lists))
+        print matching_ns_list, jaccard_index
+    return
     #     union_count = union_domain_lists(all_domains_lists)
 
     #     if intersect_count < 1 or union_count < 1:
@@ -155,25 +125,25 @@ class Command(BaseCommand):
         # collect_for("COM")
 
 
-def intersection_domain_lists(domain_lists):
-    if len(domain_lists) == 0:
+def intersection_domain_sets_size(domain_sets):
+    if len(domain_sets) == 0:
         return 0
-    if len(domain_lists) == 1:
-        return len(domain_lists[0])
 
-    first, second = set(domain_lists[0]), set(domain_lists[1])
-    start = first & second
+    if len(domain_sets) == 1:
+        return len(domain_sets[0])
 
-    for dl in domain_lists[2:]:
+    start = domain_sets[0] & domain_sets[1]
+
+    for ds in domain_sets[2:]:
         start = start & set(dl)
 
     return len(start)
 
-def union_domain_lists(domain_lists):
+def union_domain_sets_size(domain_sets):
     start = set()
 
-    for dl in domain_lists:
-        start = start | set(dl)
+    for ds in domain_sets:
+        start = start | ds
 
     return len(start)
 
