@@ -22,6 +22,7 @@ def nameserver_domains_dd():
 
 
 def collect_for(tld):
+
     infile = open('/home/atrose/%s_ns_data' % tld, 'rb')
     nameserver_domains = pickle.load(infile)
     infile.close()
@@ -35,6 +36,18 @@ def collect_for(tld):
         tox = (100.0 * len(bad_set)) / len(all_set)
         ns_tox_bad_count_list.append((ns, tox, bad_count))
         print ns, tox, bad_count
+
+
+    ns_names_only = [x[0] for x in ns_tox_bad_count_list]
+    all_tld_ns = Nameserver.objects.filter(name__contains="."+tld)
+    for ns in all_tld_ns:
+        if ns.name[-4:] != "."+tld:
+            continue
+        else:
+            if not ns in ns_names_only:
+                print ns, 'not in data'
+                ns_tox_bad_count_list.append((ns, 0.0, 0))
+
 
     ns_tox_bad_count_list = sorted(ns_tox_bad_count_list, key=lambda x: -x[2])
     outfile = open('/home/atrose/%s_ns_tox_datapoints' % tld, 'wb')
@@ -147,8 +160,8 @@ def collect_for(tld):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        # collect_for("BIZ")
-        collect_for("COM")
+        collect_for("BIZ")
+        # collect_for("COM")
 
 
 def intersection_domain_lists(domain_lists):
