@@ -44,7 +44,7 @@ def collect_for(tld):
         if ns.name[-4:] != "."+tld:
             continue
         else:
-            if not ns in ns_names_only:
+            if not ns.name in ns_names_only:
                 print ns, 'not in data'
                 ns_tox_bad_count_list.append((ns, 0.0, 0))
 
