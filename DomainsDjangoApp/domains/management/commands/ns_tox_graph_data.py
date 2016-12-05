@@ -41,17 +41,17 @@ def collect_for(tld):
 
     all_tld_azd = AddedZoneDomain.objects.filter(tld=tld)
     all_tld_ns = set()
-    for azd in all_tld_azd:
-        for ns in azd.nameservers.values_list('name', flat=True):
-            all_tld_ns.update(set(ns))
 
+    print "Making set of possible NS"
+    for azd in all_tld_azd:
+        new_s = set(azd.nameservers.values_list('name', flat=True))
+        all_tld_ns.update(new_s)
+
+    print "Adding missing"
     for ns in all_tld_ns:
-        if ns.name[-4:] != "."+tld:
-            continue
-        else:
-            if not ns.name in ns_names_only:
-                print ns.name, 'not in data'
-                ns_tox_bad_count_list.append((ns.name, 0.0, 0))
+        if not ns in ns_names_only:
+            print ns, 'not in data'
+            ns_tox_bad_count_list.append((ns, 0.0, 0))
 
 
     ns_tox_bad_count_list = sorted(ns_tox_bad_count_list, key=lambda x: -x[2])
